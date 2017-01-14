@@ -36,11 +36,11 @@
   // 	sky = new Sky();
   // 	sky.mesh.position.y = -600;
   // 	scene.add(sky.mesh);
-  // 	// money = new Money();
+  // 	// smart = new Smart();
   // 	// setTimeout(function(){
-  // 	// 	scene.add(money.mesh)
+  // 	// 	scene.add(smart.mesh)
   // 	// },1000);
-  // 	// allMoneyz.push(money);
+  // 	// allSmartz.push(smart);
   // }
 
 

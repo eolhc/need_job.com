@@ -16,7 +16,7 @@ header {
   padding: 2em;
 }
 
-#cash {
+#smart {
   position: fixed;
   display: inline-block;
   width: 25%;
@@ -27,16 +27,16 @@ header {
   top: 0;
 }
 
-#cash p {
+#smart p {
   display: inline-block;
 }
 
-#cash img {
+#smart img {
   width: 20%;
   display: inline-block;
 }
 
-#wall-street {
+#melbourne {
   position: absolute;
   width: 100%;
   height: 100%;

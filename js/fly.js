@@ -2,19 +2,23 @@ var Colors = {
 	red: 0xED6A5A,
 	grey: 0xD8DBE2,
 	green: 0x96E6B3,
-	brown: 0x9F7E69,
+	skin: 0xFFE0BD,
 	mintcream: 0xF1FFFA,
 	blue: 0xA5DCE5,
-	black: 0x000000
+	black: 0x000000,
+	blue: 0x5ec4ff
 };
 
 var points = 0;
-var moneyzArray = [];
+var smartzArray = [];
+var funnyzArray = [];
 var knivesArray = [];
 var paused = true;
 var winPoints = 10;
 var losePoints = -10;
 var levelSpeed = 0.008;
+var funnySpeed = 0.0005;
+
 
 var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH,
 		renderer, container;
@@ -29,7 +33,7 @@ function buildScene() {
   scene.fog = new THREE.Fog(0xF1FFFA, 100, 950);
 
   aspectRatio = WIDTH/HEIGHT;
-  fieldOfView = 60;
+  fieldOfView = 50;
   nearPlane = 1;
   farPlane = 10000;
   camera = new THREE.PerspectiveCamera (
@@ -52,7 +56,7 @@ function buildScene() {
 
   renderer.shadowMap.enabled = true;
 
-  container = $('#wall-street');
+  container = $('#melbourne');
   //adds the domElement of the rendered to wallstreet
   container.append(renderer.domElement);
   window.addEventListener('resize', handleWindowResize, false);
@@ -90,11 +94,11 @@ function buildLights() {
   console.log('lights are on')
 }
 
-WallStreet = function() {
+Melbourne = function() {
 	var loader = new THREE.TextureLoader();
 	var that = this;
   loader.load(
-  	'brickwall.jpg',
+  	'map.jpeg',
   	function ( texture ) {
   		var material = new THREE.MeshBasicMaterial( {
   			map: texture,
@@ -109,23 +113,40 @@ WallStreet = function() {
 	});
 }
 
-Money = function() {
+Smart = function() {
 	var loader = new THREE.TextureLoader();
 	var that = this;
 	loader.load(
-		'cash.png',
+		'lightbulb.png',
 		function ( texture ) {
 			var material = new THREE.MeshBasicMaterial( {
-				map: texture,
-				transparent: true,
-				opacity: .8
+				map: texture
 			 } );
-			 var geometry = new THREE.BoxGeometry( 25, 10, 10 );
-			 geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
-			 that.mesh = new THREE.Mesh( geometry, material );
+			 var plane = new THREE.PlaneGeometry( 20, 20 );
+			 plane.applyMatrix(new THREE.Matrix4().makeRotationZ(-Math.PI));
+			 that.mesh = new THREE.Mesh( plane, material );
+			 that.mesh.material.side = THREE.DoubleSide;
 			//  that.mesh.position.y= 50;
 	});
 }
+
+Funny = function() {
+	var loader = new THREE.TextureLoader();
+	var that = this;
+	loader.load(
+		'datboi.png',
+		function ( texture ) {
+			var material = new THREE.MeshBasicMaterial( {
+				map: texture
+			 } );
+			 var plane = new THREE.PlaneGeometry( 20, 20 );
+			 plane.applyMatrix(new THREE.Matrix4().makeRotationZ(-Math.PI));
+			 that.mesh = new THREE.Mesh( plane, material );
+			 that.mesh.material.side = THREE.DoubleSide;
+			//  that.mesh.position.y= 50;
+	});
+}
+
 
 Knife = function() {
 	var loader = new THREE.TextureLoader();
@@ -179,26 +200,57 @@ Cloud = function(){
 	}
 }
 
-allMoneyz = function() {
+allSmartz = function() {
 	this.mesh = new THREE.Object3D();
-	// let's scatter some money in the sky
-	// this.mesh = new THREE.Object3D();
-	this.nMoneyz = 20;
+	this.nSmartz = 15;
 
 	var that = this;
+	var stepSmartAngle = Math.PI*2;
 
-	var stepMoneyAngle = Math.PI*2;
-
-
-	for (var i = 0; i < this.nMoneyz; i++) {
-		m = new Money();
-
-		moneyzArray.push(m);
+	for (var i = 0; i < this.nSmartz; i++) {
+		m = new Smart();
+		smartzArray.push(m);
 	}
 
 	setTimeout(function() {
-		moneyzArray.forEach(function(m) {
-			a = stepMoneyAngle * Math.random(20);
+		smartzArray.forEach(function(m) {
+			a = stepSmartAngle * Math.random(20);
+			h = 700 + Math.random() * 50;
+
+			m.mesh.position.y = Math.sin(a) * h;
+			m.mesh.position.x = Math.cos(a) * h;
+
+			m.mesh.rotation.z = a + Math.PI/2;
+			m.mesh.position.z = 0;
+
+			s = 0.5+Math.random()*0.5;
+			m.mesh.scale.set(s,s,s);
+
+			that.mesh.add(m.mesh);
+		})
+	}, 1000)
+}
+
+allFunnyz = function() {
+	this.mesh = new THREE.Object3D();
+	// let's scatter some smart in the sky
+	// this.mesh = new THREE.Object3D();
+	this.nFunnyz = 10;
+
+	var that = this;
+
+	var stepFunnyAngle = Math.PI*2;
+
+
+	for (var i = 0; i < this.nFunnyz; i++) {
+		m = new Funny();
+
+		funnyzArray.push(m);
+	}
+
+	setTimeout(function() {
+		funnyzArray.forEach(function(m) {
+			a = stepFunnyAngle * Math.random(20);
 			h = 700 + Math.random() * 50;
 
 			m.mesh.position.y = Math.sin(a) * h;
@@ -296,14 +348,11 @@ allClouds = function(){
 	}
 }
 
-var Dog = function() {
+var Chloe = function() {
   this.mesh = new THREE.Object3D();
 
   var geomBody = new THREE.BoxGeometry(60,40,50,1,1,1)
-	var matBody = new THREE.MeshPhongMaterial({
-		shading: THREE.FlatShading
-	})
-	matBody.color.set(Colors.brown);
+	var matBody = new THREE.MeshPhongMaterial({color: Colors.blue	})
 
 	var body = new THREE.Mesh(geomBody, matBody);
 	body.castShadow = true;
@@ -311,88 +360,91 @@ var Dog = function() {
 	body.position.y = -10;
 	this.mesh.add(body)
 
-	var geomHead = new THREE.BoxGeometry(30,50,50,1,1,1);
-	var matHead = new THREE.MeshPhongMaterial({color:Colors.brown, shading:THREE.FlatShading});
+	var geomHead = new THREE.SphereGeometry(30 ,32, 32);
+	var matHead = new THREE.MeshBasicMaterial({color:Colors.skin, shading:THREE.FlatShading});
 	var head = new THREE.Mesh(geomHead, matHead);
 	head.position.x = 40;
 	head.castShadow = true;
 	head.receiveShadow = true;
 	this.mesh.add(head);
 
-	var geomRightEye = new THREE.BoxGeometry(5,10,1,1,1,1);
+	var geomTopHair = new THREE.SphereGeometry(30 ,32, 32, 0, Math.PI*2, 0, Math.PI/2);
+	var matTopHair = new THREE.MeshBasicMaterial({color:Colors.black, shading:THREE.FlatShading});
+	var topHair = new THREE.Mesh(geomTopHair, matTopHair);
+	topHair.position.x = 40;
+	topHair.castShadow = true;
+	topHair.receiveShadow = true;
+	this.mesh.add(topHair);
+
+	var points = [];
+	for ( var i = 0; i < 30; i ++ ) {
+		points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 20, ( i - 5 ) * 2 ) );
+	}
+	var geomMoreHair = new THREE.LatheGeometry( points );
+	var matMoreHair = new THREE.MeshBasicMaterial( { color: Colors.black } );
+	var moreHair = new THREE.Mesh( geomMoreHair, matMoreHair );
+	moreHair.position.x = 30;
+	moreHair.castShadow = true;
+	moreHair.receiveShadow = true;
+	moreHair.rotation.z = Math.PI / 2;
+	this.mesh.add( moreHair );
+
+
+	var geomRightEye = new THREE.BoxGeometry(5,5,1,1,1,1);
 	var matRightEye = new THREE.MeshPhongMaterial({color: Colors.black, shading: THREE.FlatShading});
 	var rightEye = new THREE.Mesh(geomRightEye, matRightEye);
-	rightEye.position.x = 40;
-	rightEye.position.y = 10;
-	rightEye.position.z = 25;
+	rightEye.position.x = 45;
+	rightEye.position.y = -10;
+	rightEye.position.z = 30;
 	rightEye.receiveShadow = true;
 	this.mesh.add(rightEye)
 
-	var geomLeftEye = new THREE.BoxGeometry(5,10,1,1,1,1);
+	var geomLeftEye = new THREE.BoxGeometry(5,5,1,1,1,1);
 	var matLeftEye = new THREE.MeshPhongMaterial({color: Colors.black, shading: THREE.FlatShading});
 	var leftEye = new THREE.Mesh(geomLeftEye, matLeftEye);
-	leftEye.position.x = 40;
-	leftEye.position.y = 10;
-	leftEye.position.z = -25;
+	leftEye.position.x = 45;
+	leftEye.position.y = -10;
+	leftEye.position.z = -30;
 	leftEye.receiveShadow = true;
 	this.mesh.add(leftEye)
 
-	var geomMouth = new THREE.BoxGeometry(20,30,30,1,1,1);
-	var matMouth = new THREE.MeshPhongMaterial({color:Colors.brown, shading:THREE.FlatShading});
-	var mouth = new THREE.Mesh(geomMouth, matMouth);
-	mouth.position.x = 60;
-	mouth.position.y = -10;
-	mouth.castShadow = true;
-	mouth.receiveShadow = true;
-	this.mesh.add(mouth);
+	var geomHair = new THREE.BoxGeometry(30,20,10,1,1,1);
+	var matHair = new THREE.MeshPhongMaterial({color:Colors.black, shading:THREE.FlatShading});
+	this.hair = new THREE.Mesh(geomHair, matHair);
+	this.hair.position.x = 10;
+	this.hair.position.y = 10;
+	this.hair.position.z = 0;
+	this.hair.castShadow = true;
+	this.hair.receiveShadow = true;
+	this.mesh.add(this.hair);
 
-	var geomNose = new THREE.BoxGeometry(10,10,5,1,1,1);
-	var matNose = new THREE.MeshPhongMaterial({color:Colors.black, shading:THREE.FlatShading});
-	var nose = new THREE.Mesh(geomNose, matNose);
-	nose.position.x = 70;
-	nose.position.y = 1;
-	nose.position.z = 0;
-	nose.receiveShadow = true;
-	this.mesh.add(nose);
+	var geomLeftLeg = new THREE.BoxGeometry(20,10,10,1,1,1);
+	var matLeftLeg = new THREE.MeshPhongMaterial({color:Colors.skin, shading:THREE.FlatShading});
+	this.leftLeg = new THREE.Mesh(geomLeftLeg, matLeftLeg);
+	this.leftLeg.position.x = -35;
+	this.leftLeg.position.y = 0;
+	this.leftLeg.position.z = -15;
+	this.leftLeg.receiveShadow = true;
+	this.mesh.add(this.leftLeg);
 
-	var geomLeftEar = new THREE.BoxGeometry(20,30,10,1,1,1);
-	var matLeftEar = new THREE.MeshPhongMaterial({color:Colors.black, shading:THREE.FlatShading});
-	this.leftEar = new THREE.Mesh(geomLeftEar, matLeftEar);
-	this.leftEar.position.x = 20;
-	this.leftEar.position.y = 10;
-	this.leftEar.position.z = -25;
-	this.leftEar.castShadow = true;
-	this.leftEar.receiveShadow = true;
-	this.mesh.add(this.leftEar);
-
-	var geomRightEar = new THREE.BoxGeometry(20,30,10,1,1,1);
-	var matRightEar = new THREE.MeshPhongMaterial({color:Colors.black, shading:THREE.FlatShading});
-	this.rightEar = new THREE.Mesh(geomRightEar, matRightEar);
-	this.rightEar.position.x = 20;
-	this.rightEar.position.y = 10;
-	this.rightEar.position.z = 25;
-	this.rightEar.castShadow = true;
-	this.rightEar.receiveShadow = true;
-	this.mesh.add(this.rightEar);
-
-	var geomTail = new THREE.BoxGeometry(15,5,5,1,1,1);
-	var matTail = new THREE.MeshPhongMaterial({color:Colors.black, shading:THREE.FlatShading});
-	this.tail = new THREE.Mesh(geomTail, matTail);
-	this.tail.position.x = -35;
-	this.tail.position.y = 5;
-	this.tail.position.z = 0;
-	this.tail.receiveShadow = true;
-	this.mesh.add(this.tail);
+	var geomRightLeg = new THREE.BoxGeometry(20,10,10,1,1,1);
+	var matRightLeg = new THREE.MeshPhongMaterial({color:Colors.skin, shading:THREE.FlatShading});
+	this.rightLeg = new THREE.Mesh(geomLeftLeg, matLeftLeg);
+	this.rightLeg.position.x = -35;
+	this.rightLeg.position.y = 0;
+	this.rightLeg.position.z = 15;
+	this.rightLeg.receiveShadow = true;
+	this.mesh.add(this.rightLeg);
 
 
 }
 
-var wallStreet;
+var melbourne;
 
-function buildWallStreet() {
-	wallStreet = new WallStreet();
+function buildMelbourne() {
+	melbourne = new Melbourne();
 	setTimeout(function(){
-		scene.add(wallStreet.mesh)}, 2000);
+		scene.add(melbourne.mesh)}, 2000);
 }
 
 var clouds;
@@ -411,39 +463,51 @@ function buildKnives() {
 	scene.add(knives.mesh)
 }
 
-var moneyz;
+var smartz;
 
-function buildMoneyz() {
-	moneyz = new allMoneyz();
-	moneyz.mesh.position.y = -600;
-	scene.add(moneyz.mesh)
+function buildSmartz() {
+	smartz = new allSmartz();
+	smartz.mesh.position.y = -600;
+	scene.add(smartz.mesh)
 }
 
-var dog;
+var funnyz;
 
-function buildDog() {
-	dog = new Dog();
-	dog.mesh.scale.set(.25,.25,.25);
-	dog.mesh.position.y = 100;
-	scene.add(dog.mesh)
+function buildFunnyz() {
+	funnyz = new allFunnyz();
+	funnyz.mesh.position.y = -600;
+	scene.add(funnyz.mesh)
+}
+
+
+var chloe;
+
+function buildChloe() {
+	chloe = new Chloe();
+	chloe.mesh.scale.set(.25,.25,.25);
+	chloe.mesh.position.y = 100;
+	scene.add(chloe.mesh)
 }
 
 function loop() {
 	if (paused == false) {
-		wallStreet.mesh.rotation.z += .005;
+		melbourne.mesh.rotation.z += .005;
 		clouds.mesh.rotation.z += .005;
 		knives.mesh.rotation.z += levelSpeed;
-		moneyz.mesh.rotation.z += levelSpeed;
+		smartz.mesh.rotation.z += levelSpeed;
+		funnyz.mesh.rotation.z += funnySpeed;
 		$(document.body).css("cursor", "none")
-		updateDogPos();
+		updateChloePos();
 		checkWin();
-		checkGetMoney();
+		checkGetSmart();
+		checkGetFunny();
 		checkGetStabbed();
 	} else {
-		wallStreet.mesh.rotation.z += 0;
+		melbourne.mesh.rotation.z += 0;
 		clouds.mesh.rotation.z += 0;
 		knives.mesh.rotation.z += 0;
-		moneyz.mesh.rotation.z += 0;
+		smartz.mesh.rotation.z += 0;
+		funnyz.mesh.rotation.z += 0;
 		$(document.body).css("cursor", "default")
 	}
 
@@ -467,21 +531,16 @@ function handleMouseMove(event) {
 	mousePos = {x:tx, y:ty};
 };
 
-function updateDogPos() {
+function updateChloePos() {
 
-	// let's move the airplane between -100 and 100 on the horizontal axis,
-	// and between 25 and 175 on the vertical axis,
-	// depending on the mouse position which ranges between -1 and 1 on both axes;
-	// to achieve that we use a normalize function (see below)
 	var targetX = normalize(mousePos.x, -.75, .75, -100, 100);
 	var targetY = normalize(mousePos.y, -.75, .75, 25, 175);
-	dog.mesh.position.y += (targetY-dog.mesh.position.y)*0.1;
-	// update the airplane's position
-	dog.mesh.position.y = targetY;
-	dog.mesh.position.x = targetX;
-	dog.tail.rotation.x += 0.3;
-	dog.rightEar.rotation.y += 0.5;
-	dog.leftEar.rotation.y += 0.5;
+	chloe.mesh.position.y += (targetY-chloe.mesh.position.y)*0.1;
+	chloe.mesh.position.y = targetY;
+	chloe.mesh.position.x = targetX;
+	chloe.leftLeg.rotation.x += 0.3;
+	chloe.rightLeg.rotation.x += 0.3;
+	chloe.hair.rotation.x += 0.5;
 }
 
 function normalize(v,vmin,vmax,tmin, tmax){
@@ -495,31 +554,62 @@ function normalize(v,vmin,vmax,tmin, tmax){
 
 }
 
-function checkGetMoney() {
+function checkGetSmart() {
 
-	m = moneyz.mesh;
+	m = smartz.mesh;
 
 	for (var i = 0; i < m.children.length; i++) {
 		mChild = m.children[i]
 		var position = new THREE.Vector3();
 
 		if (mChild.visible == true) {
-			moneyX = position.setFromMatrixPosition(mChild.matrixWorld).x;
-			moneyY = position.setFromMatrixPosition(mChild.matrixWorld).y;
+			smartX = position.setFromMatrixPosition(mChild.matrixWorld).x;
+			smartY = position.setFromMatrixPosition(mChild.matrixWorld).y;
 
-			var mXRange = [moneyX-12, moneyX + 5];
-			var mYRange = [moneyY-5, moneyY + 5];
-			//give a range to the dog
-			var dogXRange = [dog.mesh.position.x - 15, dog.mesh.position.x]
-			var dogYRange = [dog.mesh.position.y - 5, dog.mesh.position.y + 10]
+			var mXRange = [smartX-12, smartX + 5];
+			var mYRange = [smartY-5, smartY + 5];
+			//give a range to the chloe
+			var chloeXRange = [chloe.mesh.position.x - 15, chloe.mesh.position.x]
+			var chloeYRange = [chloe.mesh.position.y - 5, chloe.mesh.position.y + 10]
 
-			if (dogXRange[1] >= mXRange[0] && dogXRange[0] <= mXRange[1]
-			&& dogYRange[1] >= mYRange[0] && dogYRange[0] <= mYRange[1]) {
+			if (chloeXRange[1] >= mXRange[0] && chloeXRange[0] <= mXRange[1]
+			&& chloeYRange[1] >= mYRange[0] && chloeYRange[0] <= mYRange[1]) {
 				// m.remove(mChild);
 				//when you remove it,
 				mChild.visible = false;
 				if (mChild.visible == false) {
-					addMoney();
+					addFunnySmart();
+				}
+			}
+		}
+	}
+}
+
+function checkGetFunny() {
+
+	m = funnyz.mesh;
+
+	for (var i = 0; i < m.children.length; i++) {
+		mChild = m.children[i]
+		var position = new THREE.Vector3();
+
+		if (mChild.visible == true) {
+			funnyX = position.setFromMatrixPosition(mChild.matrixWorld).x;
+			funnyY = position.setFromMatrixPosition(mChild.matrixWorld).y;
+
+			var mXRange = [funnyX-12, funnyX + 5];
+			var mYRange = [funnyY-5, funnyY + 5];
+			//give a range to the chloe
+			var chloeXRange = [chloe.mesh.position.x - 15, chloe.mesh.position.x]
+			var chloeYRange = [chloe.mesh.position.y - 5, chloe.mesh.position.y + 10]
+
+			if (chloeXRange[1] >= mXRange[0] && chloeXRange[0] <= mXRange[1]
+			&& chloeYRange[1] >= mYRange[0] && chloeYRange[0] <= mYRange[1]) {
+				// m.remove(mChild);
+				//when you remove it,
+				mChild.visible = false;
+				if (mChild.visible == false) {
+					addFunnySmart();
 				}
 			}
 		}
@@ -541,15 +631,15 @@ function checkGetStabbed() {
 
 			var mXRange = [knifeX-12, knifeX + 5];
 			var mYRange = [knifeY-5, knifeY + 5];
-			//give a range to the dog
-			var dogXRange = [dog.mesh.position.x - 15, dog.mesh.position.x]
-			var dogYRange = [dog.mesh.position.y - 5, dog.mesh.position.y + 10]
+			//give a range to the chloe
+			var chloeXRange = [chloe.mesh.position.x - 15, chloe.mesh.position.x]
+			var chloeYRange = [chloe.mesh.position.y - 5, chloe.mesh.position.y + 10]
 
-			if (dogXRange[1] >= mXRange[0] && dogXRange[0] <= mXRange[1]
-			&& dogYRange[1] >= mYRange[0] && dogYRange[0] <= mYRange[1]) {
+			if (chloeXRange[1] >= mXRange[0] && chloeXRange[0] <= mXRange[1]
+			&& chloeYRange[1] >= mYRange[0] && chloeYRange[0] <= mYRange[1]) {
 				kChild.visible = false;
 				if (kChild.visible == false) {
-					deductMoney();
+					deductFunnySmart();
 				}
 			}
 		}
@@ -557,38 +647,38 @@ function checkGetStabbed() {
 }
 
 
-function addMoney() {
+function addFunnySmart() {
 	points += 1;
 	$('#amount').text(points)
 	// $('#amount').css("transform","scale(1.2)")
 }
 
-function deductMoney() {
+function deductFunnySmart() {
 	points -= 1;
 	$('#amount').text(points)
 }
 
 function checkWin() {
-	m = moneyz.mesh.children
-	remainingMoney = 20;
+	m = smartz.mesh.children
+	remainingSmart = 20;
 	for (var i = 0; i < m.length; i++) {
 		if (m[i].visible == false) {
-			remainingMoney -= 1;
+			remainingSmart -= 1;
 		}
 	}
 	pointDiff = winPoints - points;
-	if (remainingMoney < pointDiff) {
+	if (remainingSmart < pointDiff) {
 		loseActions();
 		$('#outcome').toggle();
-		$('#outcome').text('There is not enough free moneyz left for you to afford a burger. Get stabbed less, loser.')
+		$('#outcome').text("NO MORE FUNNY & NO MORE SMARTS LEFT! GET STABBED LESS!")
 	} else if (points == winPoints) {
 		winActions();
 		$('#outcome').toggle();
-		$('#outcome').text('Yay! You can now afford a burger!')
+		$('#outcome').text("YOU'RE HIRED!")
 	} else if (points == losePoints) {
 		loseActions();
 		$('#outcome').toggle();
-		$('#outcome').text('You got stabbed so many times that your credit rating is unacceptable for purchases of burgers.')
+		$('#outcome').text("YOU DIE! NO JOB FOR YOU!")
 	}
 }
 
@@ -607,30 +697,31 @@ function loseActions() {
 }
 
 function winAnimation() {
-	if (dog.mesh.scale.x < 2 && dog.mesh.scale.y < 2 && dog.mesh.scale.z < 2) {
-		dog.mesh.rotation.x += 0.1;
-		dog.mesh.rotation.y += 0.1;
-		dog.mesh.scale.x += 0.01;
-		dog.mesh.scale.y += 0.01;
-		dog.mesh.scale.z += 0.01;
+	if (chloe.mesh.scale.x < 2 && chloe.mesh.scale.y < 2 && chloe.mesh.scale.z < 2) {
+		chloe.mesh.rotation.x += 0.1;
+		chloe.mesh.rotation.y += 0.1;
+		chloe.mesh.scale.x += 0.01;
+		chloe.mesh.scale.y += 0.01;
+		chloe.mesh.scale.z += 0.01;
 	}
 }
 
 function loseAnimation() {
-	if (dog.mesh.position.y > -10) {
-		dog.mesh.scale.set(.5,.5,.5);
-		dog.mesh.position.y -= 5;
+	if (chloe.mesh.position.y > -10) {
+		chloe.mesh.scale.set(.5,.5,.5);
+		chloe.mesh.position.y -= 5;
 	}
 }
 
 function start() {
 	buildScene();
 	buildLights();
-	buildWallStreet();
+	buildMelbourne();
 	buildClouds();
-	buildMoneyz(); //this is child 4
+	buildSmartz(); //this is child 4
+	buildFunnyz(); //this is child 4
 	buildKnives(); //this is child 5
-	buildDog();
+	buildChloe();
 
 	$(document).on("mousemove",handleMouseMove)
 	setTimeout(function(){loop()},2000);
@@ -665,6 +756,8 @@ $(document).ready(function() {
 	$('.fa-repeat').on("mousedown", function() {
 		points = 0;
 		$('#amount').text(points)
+		$('.fa-repeat').hide();
+		$('.fa-pause').show();
 		clearGame();
 		newGame();
 	})
@@ -672,32 +765,32 @@ $(document).ready(function() {
 
 function clearGame() {
 	$('#outcome').toggle();
-	d = dog.mesh;
+	d = chloe.mesh;
 	scene.remove(d)
 	for (var i = 0; i < 999; i++) {
 		window.clearInterval(i)
 	}
 }
 
-function resizeDog() {
-	dog.mesh.rotation.x = 0;
-	dog.mesh.rotation.y = 0;
-	dog.mesh.scale.x = 0;
-	dog.mesh.scale.y = 0;
-	dog.mesh.scale.z = 0;
-	dog.mesh.position.y = 100;
+function resizeChloe() {
+	chloe.mesh.rotation.x = 0;
+	chloe.mesh.rotation.y = 0;
+	chloe.mesh.scale.x = 0;
+	chloe.mesh.scale.y = 0;
+	chloe.mesh.scale.z = 0;
+	chloe.mesh.position.y = 100;
 }
 
 function newGame() {
 	paused = false;
 	points = 0;
 	k = knives.mesh.children;
-	m = moneyz.mesh.children;
+	m = smartz.mesh.children;
 	for (var i = 0; i < k.length; i ++) {
 		k[i].visible = true;
 	}
 	for (var i = 0; i < m.length; i ++) {
 		m[i].visible = true;
 	}
-	buildDog();
+	buildChloe();
 }
