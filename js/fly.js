@@ -378,12 +378,13 @@ var Chloe = function() {
 
 	var points = [];
 	for ( var i = 0; i < 30; i ++ ) {
-		points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 20, ( i - 5 ) * 2 ) );
+		points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 20 + 10, ( i  ) * 2 ) );
 	}
 	var geomMoreHair = new THREE.LatheGeometry( points );
 	var matMoreHair = new THREE.MeshBasicMaterial( { color: Colors.black } );
 	var moreHair = new THREE.Mesh( geomMoreHair, matMoreHair );
-	moreHair.position.x = 30;
+	moreHair.position.x = 40;
+	moreHair.position.y = 0;
 	moreHair.castShadow = true;
 	moreHair.receiveShadow = true;
 	moreHair.rotation.z = Math.PI / 2;
@@ -674,7 +675,7 @@ function checkWin() {
 	} else if (points == winPoints) {
 		winActions();
 		$('#outcome').toggle();
-		$('#outcome').text("YOU'RE HIRED!")
+		$('#outcome').text("Am I enough funnyz and smarts yet?")
 	} else if (points == losePoints) {
 		loseActions();
 		$('#outcome').toggle();

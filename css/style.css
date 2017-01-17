@@ -144,3 +144,40 @@ p {
 audio {
   display: none;
 }
+
+
+@media screen and (max-width: 750px) {
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  header {
+    padding: 1em;
+  }
+
+  p {
+    font-size: 0.7em;
+  }
+
+  .fa {
+    width: 20px;
+  }
+
+  #play {
+    position: fixed;
+    top: 30%;
+    width: 85%;
+    margin: 0 auto;
+    left: 5%;
+    padding: 0.5em;
+  }
+
+  .fa-4x {
+    font-size: 2em!important;
+  }
+
+  #letsplay {
+    padding: 0.2em 1em;
+  }
+}
