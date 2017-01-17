@@ -146,6 +146,39 @@ audio {
 }
 
 
+
+@media screen and (max-width: 375px) {
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  header {
+    padding: 1em;
+  }
+
+  p {
+    font-size: 0.5em;
+  }
+
+  .fa {
+    width: 20px;
+  }
+
+  #play {
+    position: fixed;
+    top: 20%;
+    width: 80%;
+    margin: 0 auto;
+    left: 5%;
+  }
+
+  .fa-4x {
+    font-size: 2em!important;
+  }
+}
+
+
 @media screen and (max-width: 750px) {
 
   h1 {
@@ -157,7 +190,7 @@ audio {
   }
 
   p {
-    font-size: 0.7em;
+    font-size: 0.5em;
   }
 
   .fa {
@@ -179,5 +212,10 @@ audio {
 
   #letsplay {
     padding: 0.2em 1em;
+  }
+
+  #smart {
+    font-size: 0.6em;
+    width: 30%;
   }
 }

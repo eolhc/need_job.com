@@ -532,6 +532,12 @@ function handleMouseMove(event) {
 	mousePos = {x:tx, y:ty};
 };
 
+function handleTouchMove(touchX,touchY) {
+	var tx = touchX;
+	var ty = touchY;
+	mousePos = {x:tx, y:ty};
+};
+
 function updateChloePos() {
 
 	var targetX = normalize(mousePos.x, -.75, .75, -100, 100);
@@ -679,7 +685,7 @@ function checkWin() {
 	} else if (points == losePoints) {
 		loseActions();
 		$('#outcome').toggle();
-		$('#outcome').text("YOU DIE! NO JOB FOR YOU!")
+		$('#outcome').text("OH MY GOD! You killed Chloe")
 	}
 }
 
@@ -724,14 +730,21 @@ function start() {
 	buildKnives(); //this is child 5
 	buildChloe();
 
-	$(document).on("mousemove",handleMouseMove)
+	setTimeout(handleEvents,2000)
+
+	function handleEvents() {
+		$(document).on("mousemove",handleMouseMove)
+		$(document).on('touchstart', touchStart);
+		$(document).on('touchmove', touchMove);
+	}
+
 	setTimeout(function(){loop()},2000);
 }
 
 window.addEventListener('load', start, false);
 
 $(document).ready(function() {
-	$('#bg-beats').get(0).play();
+	// $('#bg-beats').get(0).play();
 
 	$('#letsplay').on("mousedown", function() {
 		paused = false;
@@ -794,4 +807,35 @@ function newGame() {
 		m[i].visible = true;
 	}
 	buildChloe();
+}
+
+
+//touch stuff
+
+// Define some variables to keep track of the touch position
+var touchX,touchY;
+
+function touchStart() {
+		getTouchPos();
+}
+
+function touchMove(e) {
+		getTouchPos(e);
+
+		// Prevent a scrolling action as a result of this touchmove triggering.
+		event.preventDefault();
+}
+
+function getTouchPos(e) {
+		if (!e)
+				var e = event;
+
+		if (e.touches) {
+				if (e.touches.length == 1) { // Only deal with one finger
+						var touch = e.touches[0]; // Get the information for finger #1
+						touchX = -1 + (touch.pageX / WIDTH)*2;
+						touchY = 1 - (touch.pageY / HEIGHT)*2;
+						handleTouchMove(touchX,touchY)
+				}
+		}
 }
